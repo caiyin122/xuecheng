@@ -1,0 +1,18 @@
+server:
+  port: 50101
+
+spring:
+  application:
+    name: xc-govern-center
+
+eureka:
+  client:
+    register-with-eureka: false    # 是否将自己注册到Eureka中
+    fetch-registry: false   # 是否向Eureka注册中心拉取注册信息
+    service-url:
+      defaultZone: http://localhost:50101/eureka/
+  server:
+    eviction-interval-timer-in-ms: 60000   # 注册表信息更新时间间隔
+    enable-self-preservation: false    # 是否开启自我保护模式
+
+
