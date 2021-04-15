@@ -109,9 +109,12 @@ public class HttpClient {
 	private void setEntity(HttpEntityEnclosingRequestBase http) {
 		if (param != null) {
 			List<NameValuePair> nvps = new LinkedList<NameValuePair>();
-			for (String key : param.keySet())
-				nvps.add(new BasicNameValuePair(key, param.get(key))); // 参数
-			http.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8)); // 设置参数
+			for (String key : param.keySet()) {
+				// 参数
+				nvps.add(new BasicNameValuePair(key, param.get(key)));
+			}
+			// 设置参数
+			http.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
 		}
 		if (xmlParam != null) {
 			http.setEntity(new StringEntity(xmlParam, Consts.UTF_8));
@@ -126,8 +129,9 @@ public class HttpClient {
 				SSLContext sslContext = new SSLContextBuilder()
 						.loadTrustMaterial(null, new TrustStrategy() {
 							// 信任所有
+							@Override
 							public boolean isTrusted(X509Certificate[] chain,
-									String authType)
+													 String authType)
 									throws CertificateException {
 								return true;
 							}

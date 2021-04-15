@@ -20,6 +20,10 @@
         <module>../xc-service-manage-cms</module>
         <module>../xc-service-manage-cms-client</module>
         <module>../xc-service-manage-course/</module>
+        <module>../test-fastdfs</module>
+        <module>../xc-service-base-filesystem</module>
+        <module>../xc-govern-center</module>
+        <module>../xc-service-search</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
@@ -42,7 +46,7 @@
         <lombok.version>1.16.16</lombok.version>
         <springfox-swagger.version>2.7.0</springfox-swagger.version>
         <fastjson.version>1.2.30</fastjson.version>
-        <fastdfs-client-java.version>1.27.0.0</fastdfs-client-java.version>
+      <!--<fastdfs-client-java.version>1.27.0.0</fastdfs-client-java.version>-->
         <mysql-connector-java.version>5.1.40</mysql-connector-java.version>
         <elasticsearch.version>6.2.1</elasticsearch.version>
         <guava.version>24.0-jre</guava.version>
@@ -88,6 +92,7 @@
                 <artifactId>feign-okhttp</artifactId>
                 <version>${feign-okhttp.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -133,10 +138,16 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>net.oschina.zcx7878</groupId>
                 <artifactId>fastdfs-client-java</artifactId>
                 <version>${fastdfs-client-java.version}</version>
+            </dependency>-->
+
+            <dependency>
+                <groupId>org.csource</groupId>
+                <artifactId>fastdfs-client-java</artifactId>
+                <version>1.29-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -157,6 +168,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>

@@ -5,9 +5,9 @@ spring:
     name: xc-service-manage-course
   datasource:
     druid:
-      url: jdbc:mysql://localhost:3306/xc_course?characterEncoding=utf-8
+      url: jdbc:mysql://192.168.56.5:3306/xc_course?characterEncoding=utf-8
       username: root
-      password: 123456
+      password: Cai15529501938.
       driverClassName: com.mysql.jdbc.Driver
       initialSize: 5  #初始建立连接数量
       minIdle: 5  #最小连接数量
@@ -24,3 +24,22 @@ spring:
 
 pagehelper:
   helper-dialect: mysql
+
+eureka:
+  client:
+    registerWithEureka: true #服务注册开关
+    fetchRegistry: true #服务发现开关
+    serviceUrl: #Eureka客户端与Eureka服务端进行交互的地址，多个中间用逗号分隔
+      defaultZone: ${EUREKA_SERVER:http://localhost:50101/eureka/}
+  instance:
+    prefer-ip-address:  true  #将自己的ip地址注册到Eureka服务中
+    ip-address: ${IP_ADDRESS:127.0.0.1}
+    instance-id: ${spring.application.name}:${server.port} #指定实例id
+
+course‐publish:
+  siteId: 5a751fab6abb5044e0d19ea1
+  templateId: 5ad9a24d68db5239b8fef199
+  previewUrl: http://www.xuecheng.com/cms/preview/
+  pageWebPath: /course/detail/
+  pagePhysicalPath: /course/detail/
+  dataUrlPre: http://localhost:31200/course/courseview/

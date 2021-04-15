@@ -2,6 +2,7 @@ package com.xuecheng.manage_cms.controller;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_cms.service.PageService;
@@ -56,5 +57,18 @@ public class CmsPageController implements CmsPageControllerApi {
     @PostMapping("/postPage/{pageId}")
     public ResponseResult post(@PathVariable("pageId") String pageId) {
         return pageService.post(pageId);
+    }
+
+    @Override
+    @PostMapping("/save")
+    public ResponseResult save(@RequestBody CmsPage cmsPage) {
+        //System.out.println("开始执行远程的方法");
+        return pageService.save(cmsPage);
+    }
+
+    @Override
+    @PostMapping("/postPageQuick")
+    public CmsPostPageResult postPageQuick(@RequestBody CmsPage cmsPage) {
+        return pageService.postPageQuick(cmsPage);
     }
 }

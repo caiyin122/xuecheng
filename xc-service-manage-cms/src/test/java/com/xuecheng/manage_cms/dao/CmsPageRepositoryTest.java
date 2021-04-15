@@ -31,7 +31,8 @@ public class CmsPageRepositoryTest {
 
         CmsPage cmsPage = new CmsPage();
         //cmsPage.setPageId("5a94d79cb00ffc3ab4bfa4f6");
-        cmsPage.setPageAliase("轮播");
+        cmsPage.setSiteId("5a751fab6abb5044e0d19ea1");
+        //cmsPage.setPageAliase("轮播");
 
         ExampleMatcher matcher = ExampleMatcher.matching();
         //模糊匹配设置

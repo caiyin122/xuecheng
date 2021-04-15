@@ -5,9 +5,11 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.xuecheng.framework.domain.cms.CmsConfig;
+import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.ResponseResult;
@@ -19,6 +21,7 @@ import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.QueryResult;
+import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -27,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -42,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,6 +66,8 @@ public class PageService {
     private GridFSBucket gridFSBucket;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private CmsSiteRepository cmsSiteRepository;
 
     public QueryResponseResult<CourseBase> findList(int page, int size, QueryPageRequest request){
 
@@ -223,7 +230,7 @@ public class PageService {
 
     /**
      *  静态化方法
-     * @param template
+     * @param
      * @param model
      * @return
      */
@@ -363,5 +370,58 @@ public class PageService {
         cmsPage.setHtmlFileId(objectId.toHexString());
         cmsPageRepository.save(cmsPage);
         return cmsPage;
+    }
+
+    // 保存页面 有则更新 没有则添加
+    public CmsPageResult save(CmsPage cmsPage) {
+        CmsPage cmsPageOld = cmsPageRepository.findCmsPaqgeByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(),
+                cmsPage.getSiteId(), cmsPage.getPageWebPath());
+        if (cmsPageOld == null) {
+            return this.add(cmsPage);
+        } else {
+            return this.update(cmsPageOld.getPageId(), cmsPage);
+        }
+    }
+
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage) {
+        //添加页面
+        CmsPageResult save = this.save(cmsPage);
+        if(!save.isSuccess()){
+            return new CmsPostPageResult(CommonCode.FAIL,null);
+        }
+        CmsPage cmsPage1 = save.getCmsPage();
+        //要布的页面id
+        String pageId = cmsPage1.getPageId();
+        //发布页面
+        ResponseResult responseResult = this.post(pageId);
+        if(!responseResult.isSuccess()){
+            return new CmsPostPageResult(CommonCode.FAIL,null);
+        }
+        //得到页面的url
+        //页面url=站点域名+站点webpath+页面webpath+页面名称
+        //站点id
+        String siteId = cmsPage1.getSiteId();
+        //查询站点信息
+        CmsSite cmsSite = findCmsSiteById(siteId);
+        //站点域名
+        String siteDomain = cmsSite.getSiteDomain();
+        //站点web路径
+        String siteWebPath = cmsSite.getSiteWebPath();
+        //页面web路径
+        String pageWebPath = cmsPage1.getPageWebPath();
+        //页面名称
+        String pageName = cmsPage1.getPageName();
+        //页面的web访问地址
+        String pageUrl = siteDomain + siteWebPath + pageWebPath+pageName;
+        return new CmsPostPageResult(CommonCode.SUCCESS,pageUrl);
+    }
+
+    //根据id查询站点信息
+    public CmsSite findCmsSiteById(String siteId){
+        Optional<CmsSite> optional = cmsSiteRepository.findById(siteId);
+        if(optional.isPresent()){
+            return optional.get();
+        }
+        return null;
     }
 }

@@ -9,10 +9,10 @@ spring:
       uri: mongodb://root:123@localhost:27017
       database: xc_cms
   rabbitmq:
-    host: 127.0.0.1
+    host: 192.168.56.5
     port: 5672
-    username: guest
-    password: guest
+    username: cy
+    password: 123456
     virtualHost: /
 
 xuecheng:
